@@ -25,7 +25,9 @@ var (
 func generateRandomBytes(length int) []byte {
 	result := make([]byte, length)
 	for i := 0; i < length; i++ {
-		result[i] = byte(rand.Uint32())
+		for result[i] == 0 || result[i] == 10 || result[i] == 13 {
+			result[i] = byte(rand.Uint32())
+		}
 	}
 	return result
 }

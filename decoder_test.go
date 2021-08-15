@@ -11,6 +11,15 @@ func TestDecoder(t *testing.T) {
 		for j := 0; j < 10000; j++ {
 			valueBytes := generateRandomBytes(i)
 
+			badValue := b2s(valueBytes)
+			_, stdErr := base64.StdEncoding.DecodeString(badValue)
+			_, ownErr := StdEncoding.DecodeString(badValue)
+			if (stdErr != nil && ownErr == nil) || (stdErr == nil && ownErr != nil) {
+				t.Log(stdErr)
+				t.Log(valueBytes)
+				t.Fatal()
+			}
+
 			value := base64.StdEncoding.EncodeToString(valueBytes)
 			stdResult, err := base64.StdEncoding.DecodeString(value)
 			if err != nil {

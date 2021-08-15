@@ -155,7 +155,9 @@ func (e *Encoding) decode(dst []byte, src []byte) int {
 			{
 				_u := ux
 				ux = ctou32(ip + 8 + 0*8)
-				stou32(op+0*6, (e.lutXd0[byte(_u)] | e.lutXd1[byte(_u>>8)] | e.lutXd2[byte(_u>>16)] | e.lutXd3[_u>>24]))
+				_u = (e.lutXd0[byte(_u)] | e.lutXd1[byte(_u>>8)] | e.lutXd2[byte(_u>>16)] | e.lutXd3[_u>>24])
+				cu |= _u
+				stou32(op+0*6, _u)
 				_v := vx
 				vx = ctou32(ip + 8 + 0*8 + 4)
 				stou32(op+0*6+3, (e.lutXd0[byte(_v)] | e.lutXd1[byte(_v>>8)] | e.lutXd2[byte(_v>>16)] | e.lutXd3[_v>>24]))
