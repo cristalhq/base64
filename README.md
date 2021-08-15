@@ -29,7 +29,7 @@ go get github.com/cristalhq/base64
 
 Replace import statement from `encoding/base64` to `github.com/cristalhq/base64`
 
-```
+```diff
 -import "encoding/base64"
 +import "github.com/cristalhq/base64"
 ```
