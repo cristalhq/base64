@@ -1,66 +1,73 @@
 package base64
 
 import (
+	"bytes"
 	"encoding/base64"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestDecoder(t *testing.T) {
 	for i := 1; i < 200; i++ {
 		for j := 0; j < 10000; j++ {
-			bytes := generateRandomBytes(i)
+			valueBytes := generateRandomBytes(i)
 
-			value := base64.StdEncoding.EncodeToString(bytes)
+			value := base64.StdEncoding.EncodeToString(valueBytes)
 			stdResult, err := base64.StdEncoding.DecodeString(value)
-			if !assert.NoError(t, err) {
+			if err != nil {
 				t.Fatal()
 			}
 			ownResult, err := StdEncoding.DecodeString(value)
-			if !assert.NoError(t, err) {
+			if err != nil {
 				t.Fatal()
 			}
-			if !assert.Equal(t, stdResult, ownResult) {
+			if !bytes.Equal(stdResult, ownResult) {
+				t.Log("expected:", stdResult)
+				t.Log("actual:  ", ownResult)
 				t.Fatal()
 			}
 
-			value = base64.RawStdEncoding.EncodeToString(bytes)
+			value = base64.RawStdEncoding.EncodeToString(valueBytes)
 			stdResult, err = base64.RawStdEncoding.DecodeString(value)
-			if !assert.NoError(t, err) {
+			if err != nil {
 				t.Fatal()
 			}
 			ownResult, err = RawStdEncoding.DecodeString(value)
-			if !assert.NoError(t, err) {
+			if err != nil {
 				t.Fatal()
 			}
-			if !assert.Equal(t, stdResult, ownResult) {
+			if !bytes.Equal(stdResult, ownResult) {
+				t.Log("expected:", stdResult)
+				t.Log("actual:  ", ownResult)
 				t.Fatal()
 			}
 
-			value = base64.URLEncoding.EncodeToString(bytes)
+			value = base64.URLEncoding.EncodeToString(valueBytes)
 			stdResult, err = base64.URLEncoding.DecodeString(value)
-			if !assert.NoError(t, err) {
+			if err != nil {
 				t.Fatal()
 			}
 			ownResult, err = URLEncoding.DecodeString(value)
-			if !assert.NoError(t, err) {
+			if err != nil {
 				t.Fatal()
 			}
-			if !assert.Equal(t, stdResult, ownResult) {
+			if !bytes.Equal(stdResult, ownResult) {
+				t.Log("expected:", stdResult)
+				t.Log("actual:  ", ownResult)
 				t.Fatal()
 			}
 
-			value = base64.RawURLEncoding.EncodeToString(bytes)
+			value = base64.RawURLEncoding.EncodeToString(valueBytes)
 			stdResult, err = base64.RawURLEncoding.DecodeString(value)
-			if !assert.NoError(t, err) {
+			if err != nil {
 				t.Fatal()
 			}
 			ownResult, err = RawURLEncoding.DecodeString(value)
-			if !assert.NoError(t, err) {
+			if err != nil {
 				t.Fatal()
 			}
-			if !assert.Equal(t, stdResult, ownResult) {
+			if !bytes.Equal(stdResult, ownResult) {
+				t.Log("expected:", stdResult)
+				t.Log("actual:  ", ownResult)
 				t.Fatal()
 			}
 		}

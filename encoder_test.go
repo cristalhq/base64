@@ -3,8 +3,6 @@ package base64
 import (
 	"encoding/base64"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestEncoder(t *testing.T) {
@@ -14,25 +12,33 @@ func TestEncoder(t *testing.T) {
 
 			stdResult := base64.StdEncoding.EncodeToString(bytes)
 			ownResult := StdEncoding.EncodeToString(bytes)
-			if !assert.Equal(t, stdResult, ownResult) {
+			if stdResult != ownResult {
+				t.Log("expected:", stdResult)
+				t.Log("actual:  ", ownResult)
 				t.Fatal()
 			}
 
 			stdResult = base64.RawStdEncoding.EncodeToString(bytes)
 			ownResult = RawStdEncoding.EncodeToString(bytes)
-			if !assert.Equal(t, stdResult, ownResult) {
+			if stdResult != ownResult {
+				t.Log("expected:", stdResult)
+				t.Log("actual:  ", ownResult)
 				t.Fatal()
 			}
 
 			stdResult = base64.URLEncoding.EncodeToString(bytes)
 			ownResult = URLEncoding.EncodeToString(bytes)
-			if !assert.Equal(t, stdResult, ownResult) {
+			if stdResult != ownResult {
+				t.Log("expected:", stdResult)
+				t.Log("actual:  ", ownResult)
 				t.Fatal()
 			}
 
 			stdResult = base64.RawURLEncoding.EncodeToString(bytes)
 			ownResult = RawURLEncoding.EncodeToString(bytes)
-			if !assert.Equal(t, stdResult, ownResult) {
+			if stdResult != ownResult {
+				t.Log("expected:", stdResult)
+				t.Log("actual:  ", ownResult)
 				t.Fatal()
 			}
 		}
