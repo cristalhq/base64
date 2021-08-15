@@ -1,6 +1,7 @@
 package base64
 
 import (
+	"math"
 	"math/bits"
 	"unsafe"
 )
@@ -50,6 +51,12 @@ func makeLuts(lutSe [64]byte) ([4096]uint32, [256]uint32, [256]uint32, [256]uint
 	lutXd1 := [256]uint32{}
 	lutXd2 := [256]uint32{}
 	lutXd3 := [256]uint32{}
+	for i := 0; i < 256; i++ {
+		lutXd0[i] = math.MaxUint32
+		lutXd1[i] = math.MaxUint32
+		lutXd2[i] = math.MaxUint32
+		lutXd3[i] = math.MaxUint32
+	}
 	for i, ichar := range lutSe {
 		for j, jchar := range lutSe {
 			lutXe[j+i*64] = uint32(ichar) | uint32(jchar)<<8
