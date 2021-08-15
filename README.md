@@ -13,8 +13,8 @@ TODO
 
 ## Features
 
-* Simple API.
-* Clean and tested code.
+* Drop-in replacement of `encoding/base64`.
+* ~3 times faster than `encoding/base64`.
 * Dependency-free.
 
 ## Install
@@ -25,10 +25,27 @@ Go version 1.16+
 go get github.com/cristalhq/base64
 ```
 
-## Example
+## How to use
 
-```go
-TODO
+Replace import statement from `encoding/base64` to `github.com/cristalhq/base64`
+
+```
+-import "encoding/base64"
++import "github.com/cristalhq/base64"
+```
+
+# Benchmarks
+
+```
+std/Encode           674.7 ns/op      0 B/op   0 allocs/op
+std/EncodeToString   943.3 ns/op   2014 B/op   2 allocs/op
+std/Decode           747.8 ns/op      0 B/op   0 allocs/op
+std/DecodeString      1012 ns/op   1792 B/op   2 allocs/op
+
+own/Encode           215.3 ns/op      0 B/op   0 allocs/op
+own/EncodeToString   354.6 ns/op   1024 B/op   1 allocs/op
+own/Decode           306.6 ns/op      0 B/op   0 allocs/op
+own/DecodeString     440.0 ns/op    768 B/op   1 allocs/op
 ```
 
 ## Documentation
