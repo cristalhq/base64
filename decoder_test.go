@@ -106,7 +106,7 @@ func BenchmarkDecoder(b *testing.B) {
 		}
 	})
 
-	length = DecodedLen(len(stdBase64ValueBytes))
+	length = StdEncoding.DecodedLen(len(stdBase64ValueBytes))
 	byteResult = make([]byte, length)
 	b.Run("own/Decode", func(b *testing.B) {
 		for n := 0; n < b.N; n++ {

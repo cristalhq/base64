@@ -61,7 +61,7 @@ func BenchmarkEncoder(b *testing.B) {
 		}
 	})
 
-	length = EncodedLen(len(valueBytes))
+	length = StdEncoding.EncodedLen(len(valueBytes))
 	byteResult = make([]byte, length)
 	b.Run("own/Encode", func(b *testing.B) {
 		for n := 0; n < b.N; n++ {

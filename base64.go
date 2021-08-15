@@ -3,22 +3,6 @@ package base64
 
 import "errors"
 
-func EncodedLen(n int) int {
-	return (n + 2) / 3 * 4
-}
-
-func RawEncodedLen(n int) int {
-	return (n*8 + 5) / 6
-}
-
-func DecodedLen(n int) int {
-	return n / 4 * 3
-}
-
-func RawDecodedLen(n int) int {
-	return n * 6 / 8
-}
-
 type Encoding struct {
 	lutSe  [64]byte
 	lutXe  [4096]uint32
@@ -29,23 +13,19 @@ type Encoding struct {
 	pad    bool
 }
 
-func (e *Encoding) Encode(dst []byte, src []byte) {
-	var length int
-	if e.pad {
-		length = EncodedLen(len(src))
-	} else {
-		length = RawEncodedLen(len(src))
+func (e *Encoding) EncodedLen(n int) int {
+	if !e.pad {
+		return (n*8 + 5) / 6
 	}
-	e.encode(dst, src, uintptr(length))
+	return (n + 2) / 3 * 4
+}
+
+func (e *Encoding) Encode(dst []byte, src []byte) {
+	e.encode(dst, src, uintptr(e.EncodedLen(len(src))))
 }
 
 func (e *Encoding) EncodeToBytes(src []byte) []byte {
-	var length int
-	if e.pad {
-		length = EncodedLen(len(src))
-	} else {
-		length = RawEncodedLen(len(src))
-	}
+	length := e.EncodedLen(len(src))
 	result := make([]byte, length)
 	e.encode(result, src, uintptr(length))
 	return result
@@ -63,6 +43,13 @@ func (e *Encoding) EncodeStringToString(src string) string {
 	return b2s(e.EncodeToBytes(s2b(src)))
 }
 
+func (e *Encoding) DecodedLen(n int) int {
+	if !e.pad {
+		return n * 6 / 8
+	}
+	return n / 4 * 3
+}
+
 func (e *Encoding) Decode(dst []byte, src []byte) (int, error) {
 	n := e.decode(dst, src)
 	if n == 0 {
@@ -72,13 +59,7 @@ func (e *Encoding) Decode(dst []byte, src []byte) (int, error) {
 }
 
 func (e *Encoding) DecodeToBytes(src []byte) ([]byte, error) {
-	var length int
-	if e.pad {
-		length = DecodedLen(len(src))
-	} else {
-		length = RawDecodedLen(len(src))
-	}
-	result := make([]byte, length)
+	result := make([]byte, e.DecodedLen(len(src)))
 	n := e.decode(result, src)
 	if n == 0 {
 		return nil, errors.New("wrong base64 data")
