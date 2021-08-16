@@ -27,11 +27,6 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v2
 
-    - name: Download module dependencies
-      env: 
-         GOPROXY: "https://proxy.golang.org"
-      run: go mod download
-
     - name: Test
       run: go test -v -coverprofile=coverage.txt ./...
 
