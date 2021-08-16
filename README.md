@@ -5,11 +5,7 @@
 [![reportcard-img]][reportcard-url]
 [![coverage-img]][coverage-url]
 
-Faster base64 encoding as specified by RFC 4648 for Go.
-
-## Rationale
-
-TODO
+Faster base64 encoding for Go, based on [Turbo-Base64](https://github.com/powturbo/Turbo-Base64).
 
 ## Features
 
