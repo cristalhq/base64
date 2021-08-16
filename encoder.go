@@ -2,6 +2,7 @@ package base64
 
 import "unsafe"
 
+//go:nosplit
 func (e *Encoding) encode(dst []byte, src []byte, outlen uintptr) {
 	inlen := len(src)
 	ip := (*sliceHeader)(unsafe.Pointer(&src)).data

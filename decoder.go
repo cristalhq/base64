@@ -2,6 +2,7 @@ package base64
 
 import "unsafe"
 
+//go:nosplit
 func (e *Encoding) decode(dst []byte, src []byte) int {
 	inlen := uintptr(len(src))
 	if inlen == 0 || (e.pad && (inlen&3) != 0) {
