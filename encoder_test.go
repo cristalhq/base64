@@ -6,12 +6,28 @@ import (
 )
 
 func TestEncoder(t *testing.T) {
+	stdResult := base64.StdEncoding.EncodeToString(nil)
+	ownResult := StdEncoding.EncodeToString(nil)
+	if stdResult != ownResult {
+		t.Log("expected:", stdResult)
+		t.Log("actual:  ", ownResult)
+		t.Fatal()
+	}
+
+	stdResult = base64.StdEncoding.EncodeToString([]byte{})
+	ownResult = StdEncoding.EncodeToString([]byte{})
+	if stdResult != ownResult {
+		t.Log("expected:", stdResult)
+		t.Log("actual:  ", ownResult)
+		t.Fatal()
+	}
+
 	for i := 1; i < 200; i++ {
 		for j := 0; j < 10000; j++ {
 			bytes := generateRandomBytes(i)
 
-			stdResult := base64.StdEncoding.EncodeToString(bytes)
-			ownResult := StdEncoding.EncodeToString(bytes)
+			stdResult = base64.StdEncoding.EncodeToString(bytes)
+			ownResult = StdEncoding.EncodeToString(bytes)
 			if stdResult != ownResult {
 				t.Log("expected:", stdResult)
 				t.Log("actual:  ", ownResult)

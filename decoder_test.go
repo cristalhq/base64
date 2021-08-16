@@ -7,6 +7,20 @@ import (
 )
 
 func TestDecoder(t *testing.T) {
+	stdResult, err := base64.StdEncoding.DecodeString("")
+	if err != nil {
+		t.Fatal()
+	}
+	ownResult, err := StdEncoding.DecodeString("")
+	if err != nil {
+		t.Fatal()
+	}
+	if !bytes.Equal(stdResult, ownResult) {
+		t.Log("expected:", stdResult)
+		t.Log("actual:  ", ownResult)
+		t.Fatal()
+	}
+
 	for i := 1; i < 200; i++ {
 		for j := 0; j < 10000; j++ {
 			valueBytes := generateRandomBytes(i)

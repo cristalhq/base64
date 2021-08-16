@@ -21,10 +21,16 @@ func (e *Encoding) EncodedLen(n int) int {
 }
 
 func (e *Encoding) Encode(dst []byte, src []byte) {
+	if len(src) == 0 {
+		return
+	}
 	e.encode(dst, src, uintptr(e.EncodedLen(len(src))))
 }
 
 func (e *Encoding) EncodeToBytes(src []byte) []byte {
+	if len(src) == 0 {
+		return []byte{}
+	}
 	length := e.EncodedLen(len(src))
 	result := make([]byte, length)
 	e.encode(result, src, uintptr(length))
@@ -51,6 +57,9 @@ func (e *Encoding) DecodedLen(n int) int {
 }
 
 func (e *Encoding) Decode(dst []byte, src []byte) (int, error) {
+	if len(src) == 0 {
+		return 0, nil
+	}
 	n := e.decode(dst, src)
 	if n == 0 {
 		return 0, errors.New("wrong base64 data")
@@ -59,6 +68,9 @@ func (e *Encoding) Decode(dst []byte, src []byte) (int, error) {
 }
 
 func (e *Encoding) DecodeToBytes(src []byte) ([]byte, error) {
+	if len(src) == 0 {
+		return []byte{}, nil
+	}
 	result := make([]byte, e.DecodedLen(len(src)))
 	n := e.decode(result, src)
 	if n == 0 {
