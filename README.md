@@ -10,6 +10,7 @@ Faster base64 encoding for Go, based on [Turbo-Base64](https://github.com/powtur
 ## Features
 
 * Drop-in replacement of `encoding/base64`.
+  * _except for ignoring `\r` and `\n` in decoder._
 * ~3 times faster than `encoding/base64`.
 * Dependency-free.
 
