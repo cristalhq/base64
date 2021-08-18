@@ -183,15 +183,10 @@ func (e *Encoding) encode(dst []byte, src []byte, outlen uintptr) {
 			ip += (16 / 4) * 3
 		}
 		if op <= (opstart+outlen)-(8+12) {
-			{
-				_u0, _u1 := u0x, u1x
-				u0x = bswap32(ip + 6 + 0*6)
-				u1x = bswap32(ip + 6 + 0*6 + 3)
-				_u0 = e.lutXe[(_u0>>8)&0xfff]<<16 | e.lutXe[_u0>>20]
-				stou32(op+0*8, _u0)
-				_u1 = e.lutXe[(_u1>>8)&0xfff]<<16 | e.lutXe[_u1>>20]
-				stou32(op+0*8+4, _u1)
-			}
+			_u0 := e.lutXe[(u0x>>8)&0xfff]<<16 | e.lutXe[u0x>>20]
+			stou32(op+0*8, _u0)
+			_u1 := e.lutXe[(u1x>>8)&0xfff]<<16 | e.lutXe[u1x>>20]
+			stou32(op+0*8+4, _u1)
 			op += 8
 			ip += (8 / 4) * 3
 		}
@@ -206,8 +201,6 @@ func (e *Encoding) encode(dst []byte, src []byte, outlen uintptr) {
 	if _l == 3 {
 		_u := uint32(*(*byte)(unsafe.Pointer(ip + 0)))<<24 | uint32(*(*byte)(unsafe.Pointer(ip + 1)))<<16 | uint32(*(*byte)(unsafe.Pointer(ip + 2)))<<8
 		stou32(op, uint32(e.lutSe[(_u>>8)&0x3f])<<24|uint32(e.lutSe[(_u>>14)&0x3f])<<16|uint32(e.lutSe[(_u>>20)&0x3f])<<8|uint32(e.lutSe[(_u>>26)&0x3f]))
-		op += 4
-		ip += 3
 	} else if _l != 0 {
 		*(*byte)(unsafe.Pointer(op)) = e.lutSe[(*(*byte)(unsafe.Pointer(ip + 0))>>2)&0x3f]
 		op++
@@ -226,7 +219,6 @@ func (e *Encoding) encode(dst []byte, src []byte, outlen uintptr) {
 		}
 		if e.pad {
 			*(*byte)(unsafe.Pointer(op)) = '='
-			op++
 		}
 	}
 }
