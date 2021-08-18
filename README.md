@@ -11,7 +11,7 @@ Faster base64 encoding for Go, based on [Turbo-Base64](https://github.com/powtur
 
 * Drop-in replacement of `encoding/base64`.
   * _except for error messages and ignoring `\r` and `\n` in decoder._
-* ~3 times faster than `encoding/base64`.
+* up to 3 times faster than `encoding/base64`.
 * Dependency-free.
 
 ## Install
@@ -33,16 +33,18 @@ Replace import statement from `encoding/base64` to `github.com/cristalhq/base64`
 
 # Benchmarks
 
-```
-std/Encode           674.7 ns/op      0 B/op   0 allocs/op
-std/EncodeToString   943.3 ns/op   2014 B/op   2 allocs/op
-std/Decode           747.8 ns/op      0 B/op   0 allocs/op
-std/DecodeString      1012 ns/op   1792 B/op   2 allocs/op
+go1.17 linux/amd64, Intel i7-7700
 
-own/Encode           215.3 ns/op      0 B/op   0 allocs/op
-own/EncodeToString   354.6 ns/op   1024 B/op   1 allocs/op
-own/Decode           306.6 ns/op      0 B/op   0 allocs/op
-own/DecodeString     440.0 ns/op    768 B/op   1 allocs/op
+```
+std/Encode           685.3 ns/op      0 B/op   0 allocs/op
+std/EncodeToString   951.8 ns/op   2048 B/op   2 allocs/op
+std/Decode           803.9 ns/op      0 B/op   0 allocs/op
+std/DecodeString      1061 ns/op   1792 B/op   2 allocs/op
+
+own/Encode           217.8 ns/op      0 B/op   0 allocs/op
+own/EncodeToString   353.2 ns/op   1024 B/op   1 allocs/op
+own/Decode           376.3 ns/op      0 B/op   0 allocs/op
+own/DecodeString     507.1 ns/op    768 B/op   1 allocs/op
 ```
 
 ## Documentation

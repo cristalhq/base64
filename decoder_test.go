@@ -159,19 +159,3 @@ func BenchmarkDecoder(b *testing.B) {
 		}
 	})
 }
-
-func BenchmarkDecoder2(b *testing.B) {
-	b.ReportAllocs()
-	var err error
-
-	length := StdEncoding.DecodedLen(len(stdBase64ValueBytes))
-	byteResult = make([]byte, length)
-	b.Run("own/Decode", func(b *testing.B) {
-		for n := 0; n < b.N; n++ {
-			resultN, err = StdEncoding.Decode(byteResult, stdBase64ValueBytes)
-			if err != nil {
-				b.Fatal()
-			}
-		}
-	})
-}
