@@ -18,7 +18,7 @@ func TestDecoder(t *testing.T) {
 		ownResult, ownErr := StdEncoding.DecodeString(src)
 		if (stdErr != nil && ownErr == nil) || (stdErr == nil && ownErr != nil) {
 			t.Log("expected:", stdErr)
-			t.Log("actual:  ", src)
+			t.Log("actual:  ", ownErr)
 			t.Fatal()
 		} else if stdErr == nil && !bytes.Equal(stdResult, ownResult) {
 			t.Log("src:     ", src)

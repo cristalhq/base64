@@ -176,8 +176,12 @@ func (e *Encoding) decode(dst []byte, src []byte) int {
 			op += (16 / 4) * 3
 		}
 		if ip < (ipstart+srclen)-(8+4) {
-			stou32(op+0*6, (e.lutXd0[byte(ux)] | e.lutXd1[byte(ux>>8)] | e.lutXd2[byte(ux>>16)] | e.lutXd3[ux>>24]))
-			stou32(op+0*6+3, (e.lutXd0[byte(vx)] | e.lutXd1[byte(vx>>8)] | e.lutXd2[byte(vx>>16)] | e.lutXd3[vx>>24]))
+			_u := ux
+			_u = (e.lutXd0[byte(_u)] | e.lutXd1[byte(_u>>8)] | e.lutXd2[byte(_u>>16)] | e.lutXd3[_u>>24])
+			cu |= _u
+			stou32(op+0*6, _u)
+			_v := vx
+			stou32(op+0*6+3, (e.lutXd0[byte(_v)] | e.lutXd1[byte(_v>>8)] | e.lutXd2[byte(_v>>16)] | e.lutXd3[_v>>24]))
 			ip += 8
 			op += (8 / 4) * 3
 		}
