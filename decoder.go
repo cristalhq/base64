@@ -4,8 +4,9 @@ import "unsafe"
 
 //go:nosplit
 func (e *Encoding) decode(dst []byte, src []byte) int {
-	inlen := uintptr(len(src))
-	if inlen == 0 || (e.pad && (inlen&3) != 0) {
+	dstlen := uintptr(len(dst))
+	srclen := uintptr(len(src))
+	if srclen == 0 || (e.pad && (srclen&3) != 0) {
 		return 0
 	}
 	ip := (*sliceHeader)(unsafe.Pointer(&src)).data
@@ -13,10 +14,10 @@ func (e *Encoding) decode(dst []byte, src []byte) int {
 	op := (*sliceHeader)(unsafe.Pointer(&dst)).data
 	opstart := op
 	var cu uint32
-	if inlen >= 8+4 {
+	if srclen >= 8+4 {
 		ux := ctou32(ip)
 		vx := ctou32(ip + 4)
-		for ip < (ipstart+inlen)-(128+4) {
+		for ip < (ipstart+srclen)-(128+4) {
 			{
 				_u := ux
 				ux = ctou32(ip + 8 + 0*8)
@@ -152,7 +153,7 @@ func (e *Encoding) decode(dst []byte, src []byte) int {
 			ip += 128
 			op += (128 / 4) * 3
 		}
-		for ip < (ipstart+inlen)-(16+4) {
+		for ip < (ipstart+srclen)-(16+4) {
 			{
 				_u := ux
 				ux = ctou32(ip + 8 + 0*8)
@@ -174,14 +175,14 @@ func (e *Encoding) decode(dst []byte, src []byte) int {
 			ip += 16
 			op += (16 / 4) * 3
 		}
-		if ip < (ipstart+inlen)-(8+4) {
+		if ip < (ipstart+srclen)-(8+4) {
 			stou32(op+0*6, (e.lutXd0[byte(ux)] | e.lutXd1[byte(ux>>8)] | e.lutXd2[byte(ux>>16)] | e.lutXd3[ux>>24]))
 			stou32(op+0*6+3, (e.lutXd0[byte(vx)] | e.lutXd1[byte(vx>>8)] | e.lutXd2[byte(vx>>16)] | e.lutXd3[vx>>24]))
 			ip += 8
 			op += (8 / 4) * 3
 		}
 	}
-	for ip < (ipstart+inlen)-4 {
+	for ip < (ipstart+srclen)-4 {
 		u := ctou32(ip)
 		u = (e.lutXd0[byte(u)] | e.lutXd1[byte(u>>8)] | e.lutXd2[byte(u>>16)] | e.lutXd3[u>>24])
 		stou32(op, u)
@@ -190,7 +191,7 @@ func (e *Encoding) decode(dst []byte, src []byte) int {
 		op += 3
 	}
 	var u uint32
-	l := (ipstart + inlen) - ip
+	l := (ipstart + srclen) - ip
 	if l == 4 {
 		if *(*byte)(unsafe.Pointer(ip + 3)) == '=' {
 			l = 3
@@ -205,6 +206,9 @@ func (e *Encoding) decode(dst []byte, src []byte) int {
 	up := (*[3]byte)(unsafe.Pointer(&u))
 	switch l {
 	case 4:
+		if !e.pad && op-opstart+3 > dstlen {
+			return 0
+		}
 		u = ctou32(ip)
 		u = (e.lutXd0[byte(u)] | e.lutXd1[byte(u>>8)] | e.lutXd2[byte(u>>16)] | e.lutXd3[u>>24])
 		*(*byte)(unsafe.Pointer(op)) = up[0]
@@ -216,6 +220,9 @@ func (e *Encoding) decode(dst []byte, src []byte) int {
 		cu |= u
 		break
 	case 3:
+		if !e.pad && op-opstart+2 > dstlen {
+			return 0
+		}
 		u = e.lutXd0[*(*byte)(unsafe.Pointer(ip + 0))] | e.lutXd1[*(*byte)(unsafe.Pointer(ip + 1))] | e.lutXd2[*(*byte)(unsafe.Pointer(ip + 2))]
 		*(*byte)(unsafe.Pointer(op)) = up[0]
 		op++
@@ -224,12 +231,18 @@ func (e *Encoding) decode(dst []byte, src []byte) int {
 		cu |= u
 		break
 	case 2:
+		if !e.pad && op-opstart >= dstlen {
+			return 0
+		}
 		u = e.lutXd0[*(*byte)(unsafe.Pointer(ip + 0))] | e.lutXd1[*(*byte)(unsafe.Pointer(ip + 1))]
 		*(*byte)(unsafe.Pointer(op)) = up[0]
 		op++
 		cu |= u
 		break
 	case 1:
+		if !e.pad && op-opstart >= dstlen {
+			return 0
+		}
 		u = e.lutXd0[*(*byte)(unsafe.Pointer(ip + 0))]
 		*(*byte)(unsafe.Pointer(op)) = up[0]
 		op++

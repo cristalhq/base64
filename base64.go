@@ -71,7 +71,11 @@ func (e *Encoding) DecodeToBytes(src []byte) ([]byte, error) {
 	if len(src) == 0 {
 		return []byte{}, nil
 	}
-	result := make([]byte, e.DecodedLen(len(src)))
+	length := e.DecodedLen(len(src))
+	if length == 0 {
+		return nil, errors.New("wrong base64 data")
+	}
+	result := make([]byte, length)
 	n := e.decode(result, src)
 	if n == 0 {
 		return nil, errors.New("wrong base64 data")

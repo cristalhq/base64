@@ -7,18 +7,38 @@ import (
 )
 
 func TestDecoder(t *testing.T) {
-	stdResult, err := base64.StdEncoding.DecodeString("")
-	if err != nil {
-		t.Fatal()
-	}
-	ownResult, err := StdEncoding.DecodeString("")
-	if err != nil {
-		t.Fatal()
-	}
-	if !bytes.Equal(stdResult, ownResult) {
-		t.Log("expected:", stdResult)
-		t.Log("actual:  ", ownResult)
-		t.Fatal()
+	for i := 0; i < 1000; i++ {
+		srcBytes := make([]byte, i)
+		for j := 0; j < i; j++ {
+			srcBytes[j] = stdLutSe[j%len(stdLutSe)]
+		}
+		src := string(srcBytes)
+
+		stdResult, stdErr := base64.StdEncoding.DecodeString(src)
+		ownResult, ownErr := StdEncoding.DecodeString(src)
+		if (stdErr != nil && ownErr == nil) || (stdErr == nil && ownErr != nil) {
+			t.Log("expected:", stdErr)
+			t.Log("actual:  ", src)
+			t.Fatal()
+		} else if stdErr == nil && !bytes.Equal(stdResult, ownResult) {
+			t.Log("src:     ", src)
+			t.Log("expected:", stdResult)
+			t.Log("actual:  ", ownResult)
+			t.Fatal()
+		}
+
+		stdResult, stdErr = base64.RawStdEncoding.DecodeString(src)
+		ownResult, ownErr = RawStdEncoding.DecodeString(src)
+		if (stdErr != nil && ownErr == nil) || (stdErr == nil && ownErr != nil) {
+			t.Log("expected:", stdErr)
+			t.Log("actual:  ", src)
+			t.Fatal()
+		} else if stdErr == nil && !bytes.Equal(stdResult, ownResult) {
+			t.Log("src:     ", src)
+			t.Log("expected:", stdResult)
+			t.Log("actual:  ", ownResult)
+			t.Fatal()
+		}
 	}
 
 	for i := 1; i < 200; i++ {
@@ -133,6 +153,22 @@ func BenchmarkDecoder(b *testing.B) {
 	b.Run("own/DecodeString", func(b *testing.B) {
 		for n := 0; n < b.N; n++ {
 			byteResult, err = StdEncoding.DecodeString(stdBase64ValueString)
+			if err != nil {
+				b.Fatal()
+			}
+		}
+	})
+}
+
+func BenchmarkDecoder2(b *testing.B) {
+	b.ReportAllocs()
+	var err error
+
+	length := StdEncoding.DecodedLen(len(stdBase64ValueBytes))
+	byteResult = make([]byte, length)
+	b.Run("own/Decode", func(b *testing.B) {
+		for n := 0; n < b.N; n++ {
+			resultN, err = StdEncoding.Decode(byteResult, stdBase64ValueBytes)
 			if err != nil {
 				b.Fatal()
 			}
