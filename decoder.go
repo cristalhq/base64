@@ -196,7 +196,7 @@ func (e *Encoding) decode(dst []byte, src []byte) int {
 	}
 	var u uint32
 	l := (ipstart + srclen) - ip
-	if l == 4 {
+	if e.pad && l == 4 {
 		if *(*byte)(unsafe.Pointer(ip + 3)) == '=' {
 			l = 3
 			if *(*byte)(unsafe.Pointer(ip + 2)) == '=' {
