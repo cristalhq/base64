@@ -47,6 +47,8 @@ own/Decode           376.3 ns/op      0 B/op   0 allocs/op
 own/DecodeString     507.1 ns/op    768 B/op   1 allocs/op
 ```
 
+# [Fuzzing](fuzz)
+
 ## Documentation
 
 See [these docs][pkg-url].
