@@ -43,8 +43,8 @@ std/DecodeString      1061 ns/op   1792 B/op   2 allocs/op
 
 own/Encode           217.8 ns/op      0 B/op   0 allocs/op
 own/EncodeToString   353.2 ns/op   1024 B/op   1 allocs/op
-own/Decode           376.3 ns/op      0 B/op   0 allocs/op
-own/DecodeString     507.1 ns/op    768 B/op   1 allocs/op
+own/Decode           426.0 ns/op      0 B/op   0 allocs/op
+own/DecodeString     598.7 ns/op    768 B/op   1 allocs/op
 ```
 
 # [Fuzzing](fuzz)
