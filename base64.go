@@ -1,7 +1,12 @@
 // based on https://github.com/powturbo/Turbo-Base64
 package base64
 
-import "errors"
+import (
+	"errors"
+	"unsafe"
+)
+
+var ErrWrongData = errors.New("wrong base64 data")
 
 type Encoding struct {
 	lutSe  [64]byte
@@ -62,7 +67,7 @@ func (e *Encoding) Decode(dst []byte, src []byte) (int, error) {
 	}
 	n := e.decode(dst, src)
 	if n == 0 {
-		return 0, errors.New("wrong base64 data")
+		return 0, ErrWrongData
 	}
 	return n, nil
 }
@@ -73,14 +78,15 @@ func (e *Encoding) DecodeToBytes(src []byte) ([]byte, error) {
 	}
 	length := e.DecodedLen(len(src))
 	if length == 0 {
-		return nil, errors.New("wrong base64 data")
+		return nil, ErrWrongData
 	}
 	result := make([]byte, length)
 	n := e.decode(result, src)
 	if n == 0 {
-		return nil, errors.New("wrong base64 data")
+		return nil, ErrWrongData
 	}
-	return result[:n], nil
+	(*sliceHeader)(unsafe.Pointer(&result)).len = n
+	return result, nil
 }
 
 func (e *Encoding) DecodeToString(src []byte) (string, error) {
