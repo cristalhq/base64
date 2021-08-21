@@ -2,7 +2,6 @@ package base64
 
 import (
 	"math"
-	"math/bits"
 	"unsafe"
 )
 
@@ -28,21 +27,6 @@ func s2b(value string) (b []byte) {
 	bh.len = sh.len
 	bh.cap = sh.len
 	return b
-}
-
-//go:nosplit
-func bswap32(ptr uintptr) uint32 {
-	return bits.ReverseBytes32(*(*uint32)(unsafe.Pointer(ptr)))
-}
-
-//go:nosplit
-func stou32(cp uintptr, x uint32) {
-	*(*uint32)(unsafe.Pointer(cp)) = x
-}
-
-//go:nosplit
-func ctou32(cp uintptr) uint32 {
-	return *(*uint32)(unsafe.Pointer(cp))
 }
 
 func makeLuts(lutSe [64]byte) ([4096]uint32, [256]uint32, [256]uint32, [256]uint32, [256]uint32) {

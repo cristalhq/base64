@@ -273,7 +273,7 @@ func (e *Encoding) decode(dst []byte, src []byte) int {
 			}
 		}
 	}
-	up := (*[3]byte)(unsafe.Pointer(&u))
+	up := (*[4]byte)(unsafe.Pointer(&u))
 	switch l {
 	case 4:
 		if !e.pad && op-opstart+3 > dstlen {
@@ -281,12 +281,8 @@ func (e *Encoding) decode(dst []byte, src []byte) int {
 		}
 		u = ctou32(ip)
 		u = (e.lutXd0[byte(u)] | e.lutXd1[byte(u>>8)] | e.lutXd2[byte(u>>16)] | e.lutXd3[u>>24])
-		*(*byte)(unsafe.Pointer(op)) = up[0]
-		op++
-		*(*byte)(unsafe.Pointer(op)) = up[1]
-		op++
-		*(*byte)(unsafe.Pointer(op)) = up[2]
-		op++
+		putTail(op, up, 3)
+		op += 3
 		cu |= u
 		break
 	case 3:
@@ -294,10 +290,8 @@ func (e *Encoding) decode(dst []byte, src []byte) int {
 			return 0
 		}
 		u = e.lutXd0[*(*byte)(unsafe.Pointer(ip + 0))] | e.lutXd1[*(*byte)(unsafe.Pointer(ip + 1))] | e.lutXd2[*(*byte)(unsafe.Pointer(ip + 2))]
-		*(*byte)(unsafe.Pointer(op)) = up[0]
-		op++
-		*(*byte)(unsafe.Pointer(op)) = up[1]
-		op++
+		putTail(op, up, 2)
+		op += 2
 		cu |= u
 		break
 	case 2:
@@ -305,7 +299,7 @@ func (e *Encoding) decode(dst []byte, src []byte) int {
 			return 0
 		}
 		u = e.lutXd0[*(*byte)(unsafe.Pointer(ip + 0))] | e.lutXd1[*(*byte)(unsafe.Pointer(ip + 1))]
-		*(*byte)(unsafe.Pointer(op)) = up[0]
+		putTail(op, up, 1)
 		op++
 		cu |= u
 		break
