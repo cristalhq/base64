@@ -55,10 +55,14 @@ func (e *Encoding) EncodeStringToString(src string) string {
 }
 
 func (e *Encoding) DecodedLen(n int) int {
-	if !e.pad {
-		return n * 6 / 8
+	sf := 0
+	if n > 4 {
+		sf++
 	}
-	return n / 4 * 3
+	if !e.pad {
+		return n*6/8 + sf
+	}
+	return n/4*3 + sf
 }
 
 func (e *Encoding) Decode(dst []byte, src []byte) (int, error) {
