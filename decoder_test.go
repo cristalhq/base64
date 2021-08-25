@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"testing"
+	"unsafe"
 )
 
 func TestDecoder(t *testing.T) {
@@ -13,6 +14,21 @@ func TestDecoder(t *testing.T) {
 			srcBytes[j] = stdLutSe[j%len(stdLutSe)]
 		}
 		src := string(srcBytes)
+
+		for _, encoding := range []*Encoding{StdEncoding, RawStdEncoding, URLEncoding, RawURLEncoding} {
+			length := encoding.DecodedLen(len(srcBytes))
+			if length == 0 {
+				continue
+			}
+			result := make([]byte, length, length+10)
+			encoding.decode(result, srcBytes)
+			(*sliceHeader)(unsafe.Pointer(&result)).len = length + 10
+			for _, b := range result[length:] {
+				if b != 0 {
+					t.Fatal("out of bounds")
+				}
+			}
+		}
 
 		stdResult, stdErr := base64.StdEncoding.DecodeString(src)
 		ownResult, ownErr := StdEncoding.DecodeString(src)
@@ -44,6 +60,21 @@ func TestDecoder(t *testing.T) {
 	for i := 1; i < 200; i++ {
 		for j := 0; j < 10000; j++ {
 			valueBytes := generateRandomBytes(i)
+
+			for _, encoding := range []*Encoding{StdEncoding, RawStdEncoding, URLEncoding, RawURLEncoding} {
+				length := encoding.DecodedLen(len(valueBytes))
+				if length == 0 {
+					continue
+				}
+				result := make([]byte, length, length+10)
+				encoding.decode(result, valueBytes)
+				(*sliceHeader)(unsafe.Pointer(&result)).len = length + 10
+				for _, b := range result[length:] {
+					if b != 0 {
+						t.Fatal("outwrite")
+					}
+				}
+			}
 
 			badValue := b2s(valueBytes)
 			_, stdErr := base64.StdEncoding.DecodeString(badValue)

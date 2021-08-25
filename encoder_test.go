@@ -3,6 +3,7 @@ package base64
 import (
 	"encoding/base64"
 	"testing"
+	"unsafe"
 )
 
 func TestEncoder(t *testing.T) {
@@ -25,6 +26,21 @@ func TestEncoder(t *testing.T) {
 	for i := 1; i < 200; i++ {
 		for j := 0; j < 10000; j++ {
 			bytes := generateRandomBytes(i)
+
+			for _, encoding := range []*Encoding{StdEncoding, RawStdEncoding, URLEncoding, RawURLEncoding} {
+				length := encoding.EncodedLen(len(bytes))
+				if length == 0 {
+					continue
+				}
+				result := make([]byte, length, length+10)
+				encoding.encode(result, bytes, uintptr(length))
+				(*sliceHeader)(unsafe.Pointer(&result)).len = length + 10
+				for _, b := range result[length:] {
+					if b != 0 {
+						t.Fatal("out of bounds")
+					}
+				}
+			}
 
 			stdResult = base64.StdEncoding.EncodeToString(bytes)
 			ownResult = StdEncoding.EncodeToString(bytes)
